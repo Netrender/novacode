@@ -24,6 +24,7 @@ dist-ssr
 *.sw?
 release
 build-release
+NovacodeIDE*
 .system_generated
 .gemini
 *.log

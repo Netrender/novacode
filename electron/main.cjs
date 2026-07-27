@@ -5,9 +5,6 @@ const { exec } = require('child_process');
 
 let mainWindow;
 
-// Путь к системному файлу настроек NovaCode IDE
-const getSettingsFilePath = () => path.join(app.getPath('userData'), 'novacode-settings.json');
-
 // Быстрое асинхронное чтение структуры папки в дереве с фильтрацией тяжёлых директорий
 function scanDirectory(dirPath, rootPath = dirPath) {
   const stats = fs.statSync(dirPath);
@@ -329,22 +326,15 @@ ipcMain.handle('windows:integrate', async () => {
   return new Promise((resolve) => {
     try {
       const exePath = app.getPath('exe');
-      const command = `
-        $path = "${exePath.replace(/\\/g, '\\\\')}";
-        New-Item -Path "HKCU:\\Software\\Classes\\Directory\\Background\\shell\\NovaCodeIDE" -Force | Out-Null;
-        Set-ItemProperty -Path "HKCU:\\Software\\Classes\\Directory\\Background\\shell\\NovaCodeIDE" -Name "(Default)" -Value "Открывать в NovaCode IDE" -Force;
-        Set-ItemProperty -Path "HKCU:\\Software\\Classes\\Directory\\Background\\shell\\NovaCodeIDE" -Name "Icon" -Value "$path" -Force;
-        New-Item -Path "HKCU:\\Software\\Classes\\Directory\\Background\\shell\\NovaCodeIDE\\command" -Force | Out-Null;
-        Set-ItemProperty -Path "HKCU:\\Software\\Classes\\Directory\\Background\\shell\\NovaCodeIDE\\command" -Name "(Default)" -Value "\\"$path\\" \\"%V\\"" -Force;
-      `;
-      const ps = spawn('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', command], {
-        windowsHide: true
+      const cmd = `reg add "HKCU\\Software\\Classes\\Directory\\Background\\shell\\NovaCodeIDE" /ve /t REG_SZ /d "Открывать в NovaCode IDE" /f && reg add "HKCU\\Software\\Classes\\Directory\\Background\\shell\\NovaCodeIDE" /v "Icon" /t REG_SZ /d "${exePath}" /f && reg add "HKCU\\Software\\Classes\\Directory\\Background\\shell\\NovaCodeIDE\\command" /ve /t REG_SZ /d "\\"${exePath}\\" \\"%V\\"" /f`;
+      
+      exec(cmd, { windowsHide: true }, (error) => {
+        if (error) {
+          resolve({ success: false, error: `Код ошибки интеграции в реестр: ${error.message}` });
+        } else {
+          resolve({ success: true });
+        }
       });
-      ps.on('exit', (code) => {
-        if (code === 0) resolve({ success: true });
-        else resolve({ success: false, error: `Код ошибки PowerShell: ${code}` });
-      });
-      ps.on('error', (err) => resolve({ success: false, error: err.message }));
     } catch (e) {
       resolve({ success: false, error: e.message });
     }

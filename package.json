@@ -17,7 +17,7 @@
     "appId": "com.novacode.ide",
     "productName": "NovaCode IDE",
     "directories": {
-      "output": "build-release"
+      "output": "NovacodeIDE - 1.0.0"
     },
     "files": [
       "dist/**/*",
@@ -26,8 +26,30 @@
     "win": {
       "icon": "build/icon.ico",
       "target": [
-        "dir"
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
       ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "NovaCode IDE",
+      "artifactName": "NovaCode-IDE-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "NovaCode-IDE-Portable-${version}.${ext}"
     }
   },
   "dependencies": {
