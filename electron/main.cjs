@@ -323,22 +323,25 @@ ipcMain.handle('windows:integrate', async () => {
   if (process.platform !== 'win32') {
     return { success: false, error: 'Интеграция поддерживается только на ОС Windows' };
   }
-  return new Promise((resolve) => {
-    try {
-      const exePath = app.getPath('exe');
-      const cmd = `reg add "HKCU\\Software\\Classes\\Directory\\Background\\shell\\NovaCodeIDE" /ve /t REG_SZ /d "Открывать в NovaCode IDE" /f && reg add "HKCU\\Software\\Classes\\Directory\\Background\\shell\\NovaCodeIDE" /v "Icon" /t REG_SZ /d "${exePath}" /f && reg add "HKCU\\Software\\Classes\\Directory\\Background\\shell\\NovaCodeIDE\\command" /ve /t REG_SZ /d "\\"${exePath}\\" \\"%V\\"" /f`;
-      
-      exec(cmd, { windowsHide: true }, (error) => {
-        if (error) {
-          resolve({ success: false, error: `Код ошибки интеграции в реестр: ${error.message}` });
-        } else {
-          resolve({ success: true });
-        }
-      });
-    } catch (e) {
-      resolve({ success: false, error: e.message });
-    }
-  });
+  try {
+    const exePath = app.getPath('exe');
+    const { execSync } = require('child_process');
+    const base = 'HKCU\\Software\\Classes\\Directory';
+
+    // Background context menu (right-click inside folder)
+    execSync('reg add "' + base + '\\Background\\shell\\NovaCodeIDE" /ve /t REG_SZ /d "Open with NovaCode IDE" /f', { windowsHide: true, stdio: 'pipe' });
+    execSync('reg add "' + base + '\\Background\\shell\\NovaCodeIDE" /v "Icon" /t REG_SZ /d "' + exePath + '" /f', { windowsHide: true, stdio: 'pipe' });
+    execSync('reg add "' + base + '\\Background\\shell\\NovaCodeIDE\\command" /ve /t REG_SZ /d "\\"' + exePath + '\\" \\"%V\\"" /f', { windowsHide: true, stdio: 'pipe' });
+
+    // Folder context menu (right-click on folder)
+    execSync('reg add "' + base + '\\shell\\NovaCodeIDE" /ve /t REG_SZ /d "Open with NovaCode IDE" /f', { windowsHide: true, stdio: 'pipe' });
+    execSync('reg add "' + base + '\\shell\\NovaCodeIDE" /v "Icon" /t REG_SZ /d "' + exePath + '" /f', { windowsHide: true, stdio: 'pipe' });
+    execSync('reg add "' + base + '\\shell\\NovaCodeIDE\\command" /ve /t REG_SZ /d "\\"' + exePath + '\\" \\"%1\\"" /f', { windowsHide: true, stdio: 'pipe' });
+
+    return { success: true };
+  } catch (e) {
+    return { success: false, error: e.message };
+  }
 });
 
 // ------------------------------------------------
