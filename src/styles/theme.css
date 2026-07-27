@@ -1,0 +1,842 @@
+/**
+ * Дизайн-система и глобальные стили NovaCode IDE
+ * Премиальная тёмная тема с поддержкой стильных градиентов, кастомных скроллбаров и микро-анимаций.
+ */
+
+:root {
+  /* Цветовые токены темы Nova Dark */
+  --bg-app: #090d16;
+  --bg-panel: #0f172a;
+  --bg-sidebar: #0b1120;
+  --bg-header: #0d1527;
+  --bg-card: #1e293b;
+  --bg-hover: rgba(255, 255, 255, 0.06);
+  --bg-active: rgba(99, 102, 241, 0.15);
+  
+  --border-color: #1e293b;
+  --border-glow: rgba(99, 102, 241, 0.3);
+
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --accent-primary: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-cyan: #06b6d4;
+  --accent-pink: #ec4899;
+  --accent-green: #10b981;
+  --accent-warning: #f59e0b;
+  --accent-error: #ef4444;
+
+  /* Подсветка синтаксиса */
+  --syntax-keyword: #c084fc;  /* Фиолетовый */
+  --syntax-string: #4ade80;   /* Зеленый */
+  --syntax-comment: #64748b;  /* Серый */
+  --syntax-tag: #f472b6;      /* Розовый */
+  --syntax-hook: #38bdf8;     /* Неоново-голубой */
+  --syntax-number: #fbbf24;   /* Янтарный */
+  --syntax-property: #a78bfa; /* Лиловый */
+  --syntax-macro: #f87171;    /* Красный */
+  --syntax-builtin: #2dd4bf;  /* Бирюзовый */
+
+  --font-code: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+  --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+[data-theme="light"], .theme-light {
+  --bg-app: #f8fafc;
+  --bg-panel: #ffffff;
+  --bg-sidebar: #f1f5f9;
+  --bg-header: #e2e8f0;
+  --bg-card: #ffffff;
+  --bg-hover: rgba(0, 0, 0, 0.05);
+  --bg-active: rgba(99, 102, 241, 0.12);
+  
+  --border-color: #cbd5e1;
+  --border-glow: rgba(99, 102, 241, 0.2);
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
+  --accent-primary: #4f46e5;
+  --accent-hover: #4338ca;
+}
+
+[data-theme="vs-dark"], .theme-vs-dark {
+  --bg-app: #1e1e1e;
+  --bg-panel: #252526;
+  --bg-sidebar: #181818;
+  --bg-header: #323233;
+  --bg-card: #2d2d2d;
+  --border-color: #3e3e42;
+  --text-primary: #cccccc;
+  --text-secondary: #9d9d9f;
+}
+
+[data-theme="light-blue"], .theme-light-blue {
+  --bg-app: #f0f8ff;
+  --bg-panel: #ffffff;
+  --bg-sidebar: #e6f2ff;
+  --bg-header: #d9ecff;
+  --bg-card: #ffffff;
+  --border-color: #bce0fd;
+  --text-primary: #0b2545;
+  --text-secondary: #134074;
+  --accent-primary: #0066cc;
+}
+
+/* Глобальный сброс и базовая разметка */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  user-select: none;
+}
+
+/* Кастомный скроллбар */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-sidebar);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Основной лейаут приложения */
+.ide-container {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.ide-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Стили верхней панели меню VS Code */
+.menu-bar-item {
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.menu-bar-item:hover, .menu-bar-item.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.menu-dropdown {
+  position: absolute;
+  top: 26px;
+  left: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glow);
+  border-radius: 6px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  min-width: 220px;
+  padding: 4px 0;
+  z-index: 200;
+}
+
+.dropdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: var(--accent-primary);
+  color: white;
+}
+
+.dropdown-item .shortcut {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.dropdown-item:hover .shortcut {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 4px 0;
+}
+
+/* Шапка IDE */
+.ide-header {
+  height: 50px;
+  background-color: var(--bg-header);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 10;
+}
+
+.ide-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  background: linear-gradient(135deg, #a855f7 0%, #6366f1 50%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.ide-header-center {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.preset-select-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 4px 12px;
+}
+
+.preset-select {
+  background: transparent;
+  color: var(--text-primary);
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+}
+
+.btn-run-macro {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+  transition: all 0.2s ease;
+}
+
+.btn-run-macro:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.6);
+}
+
+.btn-run-macro:active {
+  transform: translateY(0);
+}
+
+.ide-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-btn {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.icon-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.icon-btn.active {
+  background: var(--bg-active);
+  color: var(--accent-cyan);
+  border-color: rgba(6, 182, 212, 0.4);
+}
+
+/* Левая панель навигации Activity Bar */
+.activity-bar {
+  width: 48px;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 0;
+  gap: 16px;
+}
+
+.activity-bar-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.activity-bar-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.activity-bar-btn.active {
+  color: var(--accent-primary);
+  background: var(--bg-active);
+  border-left: 3px solid var(--accent-primary);
+}
+
+/* Дерево файлов */
+.file-explorer {
+  width: 250px;
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.explorer-header {
+  padding: 12px 16px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tree-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.tree-node {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  transition: background 0.1s;
+  user-select: none;
+}
+
+.tree-node:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.tree-node.active {
+  background: var(--bg-active);
+  color: var(--accent-cyan);
+}
+
+.tree-node-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.tree-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tree-node-action {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+
+.tree-node:hover .tree-node-action {
+  opacity: 0.6;
+}
+
+.tree-node-action:hover {
+  opacity: 1 !important;
+  background: rgba(239, 68, 68, 0.15); /* light red */
+  color: #ef4444;
+}
+
+
+/* Область открытых вкладок и редактора */
+.main-workspace {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-app);
+  overflow: hidden;
+}
+
+.tab-bar {
+  height: 38px;
+  background: var(--bg-sidebar);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+}
+
+.tab-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  height: 100%;
+  background: transparent;
+  border-right: 1px solid var(--border-color);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.tab-item:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.tab-item.active {
+  background: var(--bg-app);
+  color: var(--text-primary);
+  border-top: 2px solid var(--accent-primary);
+  font-weight: 500;
+}
+
+.tab-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+  padding: 2px;
+}
+
+.tab-close-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--accent-error);
+}
+
+/* Кастомный редактор кода */
+.editor-wrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  font-family: var(--font-code);
+  background: var(--bg-app);
+}
+
+.line-numbers {
+  width: 50px;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
+  color: var(--text-muted);
+  padding: 16px 0;
+  text-align: right;
+  padding-right: 12px;
+  user-select: none;
+  font-size: 13px;
+  line-height: 22px;
+}
+
+.line-number-active {
+  color: var(--accent-cyan);
+  font-weight: bold;
+}
+
+.code-area-container {
+  flex: 1;
+  position: relative;
+  overflow: auto;
+}
+
+.code-textarea, .code-highlight-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+  font-family: var(--font-code);
+  font-size: 14px;
+  line-height: 22px;
+  tab-size: 2;
+  white-space: pre;
+  word-wrap: normal;
+  overflow: auto;
+}
+
+.code-textarea {
+  color: transparent;
+  background: transparent;
+  caret-color: var(--accent-cyan);
+  border: none;
+  outline: none;
+  resize: none;
+  z-index: 2;
+}
+
+.code-highlight-layer {
+  z-index: 1;
+  pointer-events: none;
+  color: var(--text-primary);
+}
+
+/* Стили токенов подсветки */
+.token-comment { color: var(--syntax-comment); font-style: italic; }
+.token-keyword { color: var(--syntax-keyword); font-weight: bold; }
+.token-string { color: var(--syntax-string); }
+.token-tag { color: var(--syntax-tag); }
+.token-hook { color: var(--syntax-hook); font-weight: 600; }
+.token-number { color: var(--syntax-number); }
+.token-property { color: var(--syntax-property); }
+.token-color { color: var(--syntax-number); font-weight: bold; }
+.token-macro { color: var(--syntax-macro); font-weight: bold; }
+.token-builtin { color: var(--syntax-builtin); }
+.token-boolean { color: #f97316; }
+
+/* Цветовые плашки CSS (Color Swatches) */
+.color-swatch-badge {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+/* Всплывающий список автодополнения (IntelliSense Popup) */
+.autocomplete-popup {
+  position: absolute;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glow);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  width: 320px;
+  max-height: 240px;
+  overflow-y: auto;
+  z-index: 100;
+  padding: 4px;
+}
+
+.autocomplete-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.autocomplete-item:hover, .autocomplete-item.selected {
+  background: var(--accent-primary);
+  color: white;
+}
+
+.autocomplete-kind {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Панель Live Preview и DB Viewer */
+.split-pane {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.preview-pane {
+  flex: 1;
+  background: #ffffff;
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-header {
+  height: 38px;
+  background: var(--bg-sidebar);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.preview-iframe {
+  flex: 1;
+  border: none;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+}
+
+/* Visual SQL DB Viewer */
+.db-viewer-pane {
+  flex: 1;
+  background: var(--bg-panel);
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  overflow: auto;
+}
+
+.db-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 0.85rem;
+}
+
+.db-table th, .db-table td {
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.db-table th {
+  background: var(--bg-sidebar);
+  color: var(--accent-cyan);
+}
+
+/* Нижняя панель логов и консоль */
+.console-pane {
+  height: 180px;
+  background: var(--bg-sidebar);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-code);
+}
+
+.console-header {
+  height: 32px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.console-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  cursor: text !important;
+}
+
+.console-line {
+  margin-bottom: 4px;
+  display: flex;
+  gap: 8px;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  cursor: text !important;
+}
+
+.console-line *, .console-line span {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
+.console-line.log { color: var(--text-secondary); }
+.console-line.warn { color: var(--accent-warning); }
+.console-line.error { color: var(--accent-error); }
+.console-line.system { color: var(--accent-cyan); font-weight: bold; }
+
+/* Статус бар */
+.status-bar {
+  height: 24px;
+  background: var(--accent-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Окна модалок (Настройки & Smart File Finder) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-glow);
+  border-radius: 12px;
+  width: 480px;
+  max-width: 90vw;
+  padding: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.modal-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--bg-app);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: white;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.form-input:focus {
+  border-color: var(--accent-primary);
+}
+
+.btn-primary {
+  background: var(--accent-primary);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Activity Bar Button Hover */
+.activity-btn:hover {
+  opacity: 1 !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Предотвращение перехвата событий мышкой через iframe при ресайзе */
+body.resizing iframe, body.resizing * {
+  pointer-events: none !important;
+  user-select: none !important;
+}
+
+
