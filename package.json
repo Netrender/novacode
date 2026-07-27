@@ -1,7 +1,9 @@
 {
   "name": "novacode-ide",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.0-beta",
+  "description": "NovaCode IDE — AI-powered code editor with built-in neural network assistant, live preview, terminal, and Git integration.",
+  "author": "Netrender",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
