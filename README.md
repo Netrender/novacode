@@ -453,7 +453,7 @@ novacode/
 
 <div align="center">
 
-**Сделано с ❤️ компанией [Netrender](https://github.com/Netrender)**
+**Сделано с ❤️ командой [Netrender](https://github.com/Netrender)** , netrender.org
 
 *NovaCode IDE — код без границ*
 
